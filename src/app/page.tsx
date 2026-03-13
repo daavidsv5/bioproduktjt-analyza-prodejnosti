@@ -1,27 +1,27 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Leaf, TrendingUp, Package, ShoppingCart, RefreshCw, Download } from 'lucide-react';
+import { Leaf, TrendingUp, Package, ShoppingCart, RefreshCw, Download, Sparkles } from 'lucide-react';
 import { SaleRecord, Market, ProductSummary } from '@/types';
 import { Filters } from '@/components/Filters';
 import { AnalyticsTable } from '@/components/AnalyticsTable';
 
-function StatCard({ title, value, sub, icon: Icon, color }: {
+function StatCard({ title, value, sub, icon: Icon, gradient }: {
   title: string;
   value: string;
   sub?: string;
   icon: React.ElementType;
-  color: string;
+  gradient: string;
 }) {
   return (
-    <div className="bg-white rounded-xl border border-blue-100 p-5 flex items-start gap-4 shadow-sm">
-      <div className={`p-3 rounded-lg ${color}`}>
+    <div className={`rounded-2xl p-5 flex items-start gap-4 ${gradient} shadow-sm`}>
+      <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
         <Icon className="w-5 h-5 text-white" />
       </div>
       <div>
-        <p className="text-sm font-semibold text-gray-700 tracking-wide">{title}</p>
-        <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
-        {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
+        <p className="text-xs font-semibold text-white/70 uppercase tracking-wider">{title}</p>
+        <p className="text-2xl font-extrabold text-white mt-0.5 tabular-nums">{value}</p>
+        {sub && <p className="text-xs text-white/60 mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -125,6 +125,9 @@ export default function HomePage() {
   const totalSalesNoVat = useMemo(() => aggregated.reduce((s, r) => s + r.total_price_no_vat, 0), [aggregated]);
 
   const currency = selectedMarket === 'SK' ? 'EUR' : 'CZK';
+  const decimals = currency === 'EUR' ? 2 : 0;
+  const fmtCurrency = (n: number) =>
+    new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(n);
 
   const exportCSV = () => {
     const MONTH_NAMES: Record<number, string> = {
@@ -164,7 +167,6 @@ export default function HomePage() {
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(';'))
       .join('\r\n');
 
-    // BOM for Excel UTF-8 recognition
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -173,40 +175,43 @@ export default function HomePage() {
     a.click();
     URL.revokeObjectURL(url);
   };
-  const decimals = currency === 'EUR' ? 2 : 0;
-  const fmtCurrency = (n: number) =>
-    new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(n);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f6f7fb]">
       {/* Header */}
-      <header className="bg-white border-b border-blue-100 sticky top-0 z-10 shadow-sm">
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="p-2.5 bg-blue-600 rounded-xl">
-              <Leaf className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl shadow-md shadow-violet-200">
+              <Leaf className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">Bioprodukt JT</h1>
-              <p className="text-sm text-blue-500 font-medium">Analýza prodejnosti produktů</p>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Bioprodukt JT</h1>
+                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-100 text-violet-600 text-xs font-semibold">
+                  <Sparkles className="w-3 h-3" /> Analytics
+                </span>
+              </div>
+              <p className="text-xs text-gray-400 font-medium">Analýza prodejnosti produktů</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             {selectedMarket === 'ALL' && rateDate && (
-              <span className="text-xs text-gray-400">
-                Kurz ČNB ({rateDate}): 1 EUR = {fmtCurrency(eurCzk)} CZK
+              <span className="hidden md:block text-xs text-gray-400 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">
+                1 EUR = <span className="font-semibold text-gray-600">{fmtCurrency(eurCzk)} CZK</span>
+                <span className="text-gray-300 ml-1">({rateDate})</span>
               </span>
             )}
             {lastUpdated && (
-              <span className="text-xs text-gray-400">
-                Aktualizováno: {lastUpdated.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}
+              <span className="hidden sm:block text-xs text-gray-400">
+                {lastUpdated.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}
               </span>
             )}
             <button
               onClick={fetchFromSheets}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-violet-600 bg-violet-50 border border-violet-200 rounded-xl hover:bg-violet-100 transition-all disabled:opacity-50 shadow-sm"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               Obnovit
@@ -215,20 +220,20 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Loading */}
         {loading && rawData.length === 0 && (
           <div className="text-center py-24">
-            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+            <div className="w-16 h-16 bg-violet-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+              <RefreshCw className="w-7 h-7 text-violet-500 animate-spin" />
             </div>
-            <p className="text-gray-400">Načítám data z Google Sheets...</p>
+            <p className="text-gray-400 font-medium">Načítám data z Google Sheets...</p>
           </div>
         )}
 
         {/* Error */}
         {!loading && error && rawData.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-xl border border-red-100">
+          <div className="text-center py-16 bg-white rounded-2xl border border-red-100 shadow-sm">
             <p className="text-red-500 font-medium">{error}</p>
           </div>
         )}
@@ -237,7 +242,7 @@ export default function HomePage() {
         {rawData.length > 0 && (
           <>
             {/* Filters */}
-            <div className="bg-white rounded-xl border border-blue-100 p-4 shadow-sm">
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
               <Filters
                 years={years}
                 months={months}
@@ -257,38 +262,41 @@ export default function HomePage() {
                 value={fmtCurrency(totalSalesVat)}
                 sub={currency}
                 icon={TrendingUp}
-                color="bg-blue-600"
+                gradient="bg-gradient-to-br from-violet-600 to-indigo-600"
               />
               <StatCard
                 title="Celkový prodej bez DPH"
                 value={fmtCurrency(totalSalesNoVat)}
                 sub={currency}
                 icon={ShoppingCart}
-                color="bg-blue-500"
+                gradient="bg-gradient-to-br from-indigo-500 to-blue-600"
               />
               <StatCard
                 title="Celkový počet kusů"
                 value={totalQty.toLocaleString('cs-CZ')}
-                sub="ks prodáno"
+                sub="prodáno"
                 icon={Package}
-                color="bg-indigo-500"
+                gradient="bg-gradient-to-br from-blue-500 to-cyan-500"
               />
               <StatCard
                 title="Počet produktů"
                 value={aggregated.length.toString()}
                 sub="unikátních produktů"
                 icon={Leaf}
-                color="bg-indigo-600"
+                gradient="bg-gradient-to-br from-cyan-500 to-teal-500"
               />
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl border border-blue-100 p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Přehled produktů</h2>
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="text-base font-bold text-gray-800">Přehled produktů</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">{aggregated.length} produktů · seřazeno dle počtu kusů</p>
+                </div>
                 <button
                   onClick={exportCSV}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                  className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-violet-600 bg-violet-50 border border-violet-200 rounded-xl hover:bg-violet-100 transition-all shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Export CSV
