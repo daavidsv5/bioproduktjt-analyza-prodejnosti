@@ -141,8 +141,9 @@ export default function HomePage() {
 
     const sorted = [...aggregated].sort((a, b) => b.total_quantity - a.total_quantity);
 
+    const exportDecimals = currency === 'EUR' ? 2 : 0;
     const fmt = (n: number) =>
-      new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: exportDecimals, maximumFractionDigits: exportDecimals }).format(n);
 
     const header = ['Název produktu', 'Počet kusů', `Hodnota bez DPH (${currency})`, `Hodnota s DPH (${currency})`];
     const rows = sorted.map((r) => [
@@ -172,8 +173,9 @@ export default function HomePage() {
     a.click();
     URL.revokeObjectURL(url);
   };
+  const decimals = currency === 'EUR' ? 2 : 0;
   const fmtCurrency = (n: number) =>
-    new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+    new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(n);
 
   return (
     <div className="min-h-screen bg-gray-50">

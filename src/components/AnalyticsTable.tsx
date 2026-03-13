@@ -37,7 +37,8 @@ export function AnalyticsTable({ data, currency }: AnalyticsTableProps) {
     return ((aVal as number) - (bVal as number)) * dir;
   });
 
-  const fmt = (n: number) => new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  const decimals = currency === 'EUR' ? 2 : 0;
+  const fmt = (n: number) => new Intl.NumberFormat('cs-CZ', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(n);
 
   const headers: { label: string; field: SortField }[] = [
     { label: 'Název produktu', field: 'product_name' },
