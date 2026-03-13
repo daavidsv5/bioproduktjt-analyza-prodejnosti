@@ -1,0 +1,57 @@
+Prompt pro Claude Code: Analytická aplikace Bioprodukt JT
+Kontext:
+Vytvoř moderní webovou aplikaci pro analýzu prodejů projektu "Bioprodukt JT". Aplikace bude sloužit k importu a vizualizaci prodejních dat z CSV souborů.
+
+Technický stack:
+
+Framework: Next.js (App Router)
+
+Jazyk: TypeScript
+
+Styling: Tailwind CSS + Shadcn UI (pokud je k dispozici)
+
+Stav/Data: React hooks (useState, useMemo)
+
+Parsing: PapaParse (pro zpracování CSV)
+
+Klíčové funkcionality:
+
+1. Import a transformace dat
+Implementuj drag-and-drop zónu pro nahrání CSV souboru.
+
+Kódování: Automaticky převáděj vstupní data z kódování Windows-1250 na UTF-8.
+
+Zajisti parsování číselných hodnot (ošetření čárek vs. teček u cen).
+
+2. Datový model a filtrace
+Aplikace musí umožnit rozpad dat podle:
+
+Časové období: Filtr pro výběr konkrétního roku a měsíce (odvozeno z data objednávky/prodeje).
+
+Trh (Měna): Přepínač nebo filtr mezi CZ (CZK) a SK (EUR) na základě sloupce s měnou.
+
+3. Přehled produktů (Tabulka)
+Zobraz tabulku všech produktů v daném období s těmito sloupci:
+
+Název produktu
+
+Počet prodaných kusů
+
+Celková hodnota bez DPH
+
+Celková hodnota s DPH
+
+4. UI/UX Požadavky
+Dashboard look: Horní lišta s filtry, pod ní souhrnné karty (Total Sales, Total Qty) a následně detailní tabulka produktů.
+
+Čistý, responzivní design laděný do barev značky (přírodní tóny, zelená/bílá/šedá).
+
+Možnost seřadit tabulku podle nejprodávanějších položek.
+
+Instrukce pro implementaci:
+
+Vytvoř čistou strukturu komponent (/components/FileUpload, /components/AnalyticsTable, /components/Filters).
+
+Použij useMemo pro výpočet agregovaných dat, aby byla aplikace svižná i při větším množství řádků.
+
+Předpokládej strukturu CSV obsahující sloupce: product_name, quantity, price_vat, price_no_vat, currency, date.

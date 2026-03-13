@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.google.com)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(cp:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest:*)",
+      "Bash(npm run:*)",
+      "WebFetch(domain:doc-08-40-sheets.googleusercontent.com)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd:*)"
+    ]
+  }
+}
