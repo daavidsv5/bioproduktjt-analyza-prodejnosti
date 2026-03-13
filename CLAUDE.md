@@ -56,6 +56,16 @@ Data se načítají z veřejně publikovaného Google Sheets dokumentu jako CSV:
 - **Storno**: řádky se statusem obsahujícím "storno" se vylučují
 - **Kurz EUR/CZK**: načítá se z ČNB API v `/api/exchange-rate`, fallback = 25.0
 - **Export CSV**: tlačítko v UI exportuje aktuálně filtrovaná data s BOM (UTF-8 pro Excel)
+- **Zaokrouhlení**: CZK hodnoty se zobrazují jako celá čísla (0 desetinných míst), EUR zachovává 2 desetinná místa
+
+## Design
+
+- **Barevná paleta**: violet/indigo/blue/teal gradienty
+- **Pozadí**: `#f6f7fb` (jemná šedá)
+- **Stat karty**: gradient pozadí, bílé ikony a text
+- **Tabulka**: hodnoty s DPH tučně zvýrazněné, počet kusů v pill badge, fialový hover efekt
+- **Filtry**: zaoblené selecty (`rounded-xl`), gradient na aktivním tlačítku trhu
+- **Tlačítka**: violet styl (`bg-violet-50`, `border-violet-200`)
 
 ## Typy
 
